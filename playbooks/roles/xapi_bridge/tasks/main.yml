@@ -38,14 +38,14 @@
     - { path: "{{ xapi_bridge_venv_dir }}" }
   tags: ["xapi_bridge"]
 
-#- name: checkout xapi-bridge repo into {{ xapi_bridge_code_dir }}
-#  git:
-#    dest: "{{ xapi_bridge_code_dir }}"
-#    repo: "{{ xapi_bridge_repo }}"
-#    version: "{{ xapi_bridge_version }}"
-#    accept_hostkey: yes
-#  become_user: "{{ xapi_bridge_user }}"
-#  tags: ["xapi_bridge"]
+- name: checkout xapi-bridge repo into {{ xapi_bridge_code_dir }}
+  git:
+    dest: "{{ xapi_bridge_code_dir }}"
+    repo: "{{ xapi_bridge_repo }}"
+    version: "{{ xapi_bridge_version }}"
+    accept_hostkey: yes
+  become_user: "{{ xapi_bridge_user }}"
+  tags: ["xapi_bridge"]
 
 - name: git clean after checking out xapi_bridge code
   shell: cd {{ xapi_bridge_code_dir }} && git clean -xdf
@@ -115,17 +115,17 @@
     - xapi:log_files
 
 # This is only needed for systemd version 236 or more
-# - name: create the log file
-#   file:
-#     path: "{{ xapi_bridge_log_dir }}/{{ item }}"
-#     state: touch
-#     mode: 0644
-#     owner: "{{ xapi_bridge_log_user }}"
-#     group: "{{ xapi_bridge_log_user }}"
-#   with_items:
-#     - 'xapi_stderr.log'
-#     - 'xapi_stdout.log'
-#   tags: ["xapi_bridge"]
+ - name: create the log file
+   file:
+     path: "{{ xapi_bridge_log_dir }}/{{ item }}"
+     state: touch
+     mode: 0644
+     owner: "{{ xapi_bridge_log_user }}"
+     group: "{{ xapi_bridge_log_user }}"
+   with_items:
+     - 'xapi_stderr.log'
+     - 'xapi_stdout.log'
+   tags: ["xapi_bridge"]
 
 - name: Add xapi_bridge systemd configuration on 16.04
   template:
