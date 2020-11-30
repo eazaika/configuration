@@ -1,0 +1,31 @@
+[Unit]
+Description=edX xAPI Bridge Service
+After=network.target
+Documentation=https://github.com/raccoongang/edx-xapi-bridge
+
+[Service]
+User={{ xapi_bridge_user }}
+WorkingDirectory={{ xapi_bridge_code_dir }}
+ExecStart={{ COMMON_BIN_DIR}}/python.xapi_bridge xapi_bridge {{ COMMON_LOG_DIR }}/tracking/tracking.log
+Restart=always
+# These flags are supported in systemd version 236 or more.
+# StandardOutput=file:/edx/var/log/xapi/xapi_stdout.log 
+# StandardError=file:/edx/var/log/xapi/xapi_stderr.log 
+
+# Setting Restart interval to be 3 seconds
+# because systemd stops restarting if the service fails to restart
+# more than 5 times within a period of 10 seconds.
+# https://www.freedesktop.org/software/systemd/man/systemd.unit.html#StartLimitIntervalSec=
+RestartSec=3
+
+# Implementing resource restrictions with systemd
+CPUAccounting=yes
+CPUQuota=30%
+StartupCPUWeight= 35%
+
+MemoryAccounting=yes
+
+# we also have MemoryMax where the process is actively killed as soon as it corsses the set limit. 
+# A more sane setting would be MemoryHigh where the process is allowed to go above limits (with struggle)
+# but is heavily slowed down and memory is taken away aggressively.
+MemoryHigh=512M
